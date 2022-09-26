@@ -139,54 +139,46 @@ public class Converter {
 
             // parse json string to object
             JSONObject object = (JSONObject) parser.parse(jsonString);
-            
-            
+
 
             // read colHeaders
             JSONArray colHeaders = (JSONArray) object.get("colHeaders");
-            
-            // to store array of strings
-            String[] stringArray = new String[colHeaders.size()];
-            
-            for (int i = 0; i < colHeaders.size(); i++) {
-                stringArray[i] = (String) colHeaders.get(i);
-            }
-            
-            csvWriter.writeNext(stringArray);
 
-            // now get the row and other data
+            // to store array of strings
+            String[] dataArray = new String[colHeaders.size()];
+
+            for (int i = 0; i < colHeaders.size(); i++) {
+                dataArray[i] = (String) colHeaders.get(i);
+            }
+
+            csvWriter.writeNext(dataArray);
+
             // rowHeader is array of ids
             JSONArray rowHeader = (JSONArray) object.get("rowHeaders");
             // data is array of int arrays
             JSONArray data = (JSONArray) object.get("data");
 
-            // parsed row data holder
-            List < String > dataList = new ArrayList < > ();
-
             for (int i = 0; i < rowHeader.size(); i++) {
                 // i = each entry in the csv data
                 //"111278","611","146","128","337"
-                
+
                 // add id first
-                stringArray[0] = (String) rowHeader.get(i);
-                          
+                dataArray[0] = (String) rowHeader.get(i);
+
                 // this returns an array again
                 JSONArray scores = (JSONArray) data.get(i);
-                
+
                 long temp;
                 for (int j = 0; j < scores.size(); j++) {
                     temp = (long) scores.get(j);
-                    stringArray[j+1] = (Long.toString(temp));
+                    dataArray[j + 1] = (Long.toString(temp));
                 }
 
-               
-                csvWriter.writeNext(stringArray);
-                
-                // reset the List that hold the parsed row data
-                dataList = new ArrayList<>();
+                csvWriter.writeNext(dataArray);
+
             }
 
-
+            // write data to file
             results = writer.toString();
 
         } catch (Exception e) {
